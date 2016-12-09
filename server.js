@@ -12,27 +12,15 @@ app.set('views', __dirname + '/views');
 // set EJS as the templating engine
 app.set('view engine','ejs');
 
-var mongoose = require('mongoose');
-var db = 'mongodb://localhost/quotes';
+// fires up connection to db, loads models, loads model controllers
+require('./server/config/mongoose.js');
 
-mongoose.connect(db,function(){
-   console.log('mongoose connected');
-});
-
-var ItemSchema = new mongoose.Schema({
- name: String,
- quote: String
-}, { timestamps: {createdAt: 'created_at', updatedAt: 'updated_at'} });
-
-var Item = mongoose.model('Item',ItemSchema);
-
-// store the function in a variable
+// route magic...
 var routes_setter = require('./server/config/routes.js');
-// invoke the function stored in routes_setter and pass it the "app" variable
 routes_setter(app);
 
 
-// BEGIN listening for requests -----------------
+// Listen for requests -----------------
 var server = app.listen(port,function(){
    console.log('Listening on port %d',port);
 });
