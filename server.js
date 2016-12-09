@@ -24,8 +24,6 @@ var ItemSchema = new mongoose.Schema({
  quote: String
 }, { timestamps: {createdAt: 'created_at', updatedAt: 'updated_at'} });
 
-module.exports = mongoose.model('item',ItemSchema);
-
 var Item = mongoose.model('Item',ItemSchema);
 
 // store the function in a variable
