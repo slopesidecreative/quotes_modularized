@@ -6,9 +6,9 @@ var port = 8000;
 // for parsing the POST body
 app.use(bodyParser.urlencoded({extended: true}));
 // set the static directory
-app.use(express.static(__dirname + '/static'));
+app.use(express.static(__dirname + '/client/static'));
 // set the views directory
-app.set('views', __dirname + '/views');
+app.set('views', __dirname + '/client/views');
 // set EJS as the templating engine
 app.set('view engine','ejs');
 
@@ -18,7 +18,6 @@ require('./server/config/mongoose.js');
 // route magic...
 var routes_setter = require('./server/config/routes.js');
 routes_setter(app);
-
 
 // Listen for requests -----------------
 var server = app.listen(port,function(){
