@@ -1,7 +1,6 @@
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
-var moment = require('moment');
 var port = 8000;
 
 // for parsing the POST body
@@ -13,58 +12,32 @@ app.set('views', __dirname + '/views');
 // set EJS as the templating engine
 app.set('view engine','ejs');
 
-// our connection to the User model via Mongoose
-var Item = require('./static/js/db.js');
+var mongoose = require('mongoose');
+var db = 'mongodb://localhost/quotes';
 
-// ROUTES --------------------------------------
-
-// "/"
-// Root - show all
-app.get('/', function (req, res){
-   console.log('Create item: form');
-   res.render('index')
-});
-/* POST
-   /items
-   Create a new item based on form submission.
-*/
-app.post('/items', function (req, res){
-   console.log('Create item: action. Quote: ',req.body.quote);
-   var item = new Item({
-      name: req.body.name,
-      quote: req.body.quote
-   });
-   item.save(function(err){
-      if(err){
-         console.log('error',err);
-         res.redirect('/404',{errors:err});
-      }
-      res.redirect('/items');
-   })
-
-});
-/*
-   GET /items
-   Show all items.
-*/
-app.get('/items', function (req, res){
-   console.log('Show all items.');
-   Item.find({}, function(err, data) {
-      if(err){
-         console.log('error: ',err);
-         res.redirect('/404',{errors:err});
-      }else{
-         res.render('index',{items:data, moment: moment});
-      }
-   })
+mongoose.connect(db,function(){
+   console.log('mongoose connected');
 });
 
-// "/404"
-// Error
-app.get('/404', function (err){
-   console.log('ERROR ',err);
-   res.render('404',{errors:err});
-});
+var ItemSchema = new mongoose.Schema({
+ name: String,
+ quote: String
+}, { timestamps: {createdAt: 'created_at', updatedAt: 'updated_at'} });
+
+module.exports = mongoose.model('item',ItemSchema);
+
+var Item = mongoose.model('Item',ItemSchema);
+
+
+
+// store the function in a variable
+var routes_setter = require('./server/config/routes.js');
+// invoke the function stored in routes_setter and pass it the "app" variable
+routes_setter(app);
+
+
+
+
 
 // BEGIN listening for requests -----------------
 var server = app.listen(port,function(){
